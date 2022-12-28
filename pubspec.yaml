@@ -41,6 +41,7 @@ dependencies:
   dio: ^4.0.6
   logger: ^1.1.0
   provider: ^6.0.5
+  permission_handler: ^10.2.0
 
 dev_dependencies:
   flutter_test:

@@ -6,9 +6,12 @@ class ChatController with ChangeNotifier {
 
   List<Chat> get chats => _chats;
 
+
+
   void addChat(Chat chat) {
     _chats.add(chat);
     notifyListeners();
   }
-  
+
+
 }

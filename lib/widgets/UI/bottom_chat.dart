@@ -1,7 +1,9 @@
 import 'package:bakurdi/controllers/chat_controller.dart';
+import 'package:bakurdi/helpers/helper_functions.dart';
 import 'package:bakurdi/models/chat.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 
 class BottomChat extends StatefulWidget {
   const BottomChat({super.key});
@@ -12,6 +14,11 @@ class BottomChat extends StatefulWidget {
 
 class _BottomChatState extends State<BottomChat> {
   TextEditingController chatController = TextEditingController();
+
+  SpeechToText speech = SpeechToText();
+  bool isListening = false;
+  double confidence = 1.0;
+
   @override
   void dispose() {
     super.dispose();
@@ -28,8 +35,23 @@ class _BottomChatState extends State<BottomChat> {
           child: Row(
             children: [
               IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.mic),
+                onPressed: () async {
+                  setState(() {
+                    isListening = !isListening;
+                  });
+                  if (isListening) {
+                    await startListening(speech);
+                    speech.listen(
+                      onResult: (res) {
+                        chatController.text = res.recognizedWords;
+                      },
+                    );
+                  } else {
+                    await stopListening(speech);
+                  }
+                },
+                icon: Icon(Icons.mic,
+                    color: isListening ? Colors.blue : Colors.grey),
               ),
               Expanded(
                 flex: 4,
@@ -37,12 +59,18 @@ class _BottomChatState extends State<BottomChat> {
                     Consumer<ChatController>(builder: (context, controller, _) {
                   return TextField(
                     controller: chatController,
-                    onSubmitted: (val) {
-                      controller.addChat(
-                        Chat(message: chatController.text),
-                      );
-                      chatController.clear();
-                      FocusScope.of(context).unfocus();
+                    onSubmitted: (val) async {
+                      await stopListening(speech);
+                      setState(() {
+                        isListening = false;
+                      });
+
+                      if (chatController.text.isNotEmpty) {
+                        controller.addChat(Chat(
+                          message: chatController.text,
+                        ));
+                        chatController.clear();
+                      }
                     },
                     decoration: const InputDecoration(
                       hintText: 'Type a message',
@@ -53,12 +81,18 @@ class _BottomChatState extends State<BottomChat> {
               ),
               Consumer<ChatController>(builder: (context, controller, _) {
                 return IconButton(
-                  onPressed: () {
-                    controller.addChat(
-                      Chat(message: chatController.text),
-                    );
-                    chatController.clear();
-                    FocusScope.of(context).unfocus();
+                  onPressed: () async {
+                    await stopListening(speech);
+                    setState(() {
+                      isListening = false;
+                    });
+
+                    if (chatController.text.isNotEmpty) {
+                      controller.addChat(Chat(
+                        message: chatController.text,
+                      ));
+                      chatController.clear();
+                    }
                   },
                   icon: const Icon(Icons.send),
                 );
