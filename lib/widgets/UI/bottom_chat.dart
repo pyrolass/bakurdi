@@ -65,6 +65,7 @@ class _BottomChatState extends State<BottomChat> {
                           message: chatController.text,
                           isOwner: true,
                         ));
+
                         controller.sendMessage(chatController.text);
                       }
                       chatController.clear();

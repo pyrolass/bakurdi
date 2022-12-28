@@ -9,7 +9,7 @@ import '../networking/dio_exceptions.dart';
 class ChatController with ChangeNotifier {
   final DioClient _dioClient = DioClient();
 
-  List<Chat> _chats = [];
+  final List<Chat> _chats = [];
   List<Chat> get chats => _chats;
 
   bool _loading = false;
@@ -25,13 +25,14 @@ class ChatController with ChangeNotifier {
   }
 
   Future<List<Chat>> sendMessage(String message) async {
-    print("object");
+    String englishMessage = await translateToEnglish(message);
+
     setIsLoading(true);
     try {
       var response = await _dioClient.post(
         "https://api.openai.com/v1/engines/text-davinci-003/completions",
         data: {
-          "prompt": message,
+          "prompt": englishMessage,
           "max_tokens": 150,
           "temperature": 0.9,
           "top_p": 1,
@@ -42,25 +43,72 @@ class ChatController with ChangeNotifier {
         options: Options(
           headers: {
             "Content-Type": "application/json",
-            "Authorization": "Bearer $token"
+            "Authorization": "Bearer $chatToken"
           },
         ),
       );
       if (response.statusCode == 200) {
-        _chats.add(
-          Chat.fromJson(
-            response.data["choices"][0],
-          ),
-        );
+        String kurdishMessage =
+            await translateToKurdish(response.data["choices"][0]["text"]);
+        _chats.add(Chat(message: kurdishMessage));
       }
     } on DioError catch (e) {
-      setIsLoading(true);
       final errorMessage = DioExceptions.fromDioError(e).toString();
 
       throw errorMessage;
     }
-    setIsLoading(true);
+    setIsLoading(false);
     notifyListeners();
     return _chats;
+  }
+
+  Future<String> translateToEnglish(String message) async {
+    // we translate the text to english
+    try {
+      var response = await _dioClient.post(
+        "https://translation.googleapis.com/language/translate/v2",
+        data: {
+          "q": message,
+          "target": "en",
+        },
+        options: Options(
+          headers: {"x-goog-api-key": translationToken},
+        ),
+      );
+      if (response.statusCode == 200) {
+        message = response.data["data"]["translations"][0]["translatedText"];
+      }
+    } on DioError catch (e) {
+      final errorMessage = DioExceptions.fromDioError(e).toString();
+
+      throw errorMessage;
+    }
+
+    return message;
+  }
+
+  Future<String> translateToKurdish(String message) async {
+    // we translate the text to english
+    try {
+      var response = await _dioClient.post(
+        "https://translation.googleapis.com/language/translate/v2",
+        data: {
+          "q": message,
+          "target": "ckb",
+        },
+        options: Options(
+          headers: {"x-goog-api-key": translationToken},
+        ),
+      );
+      if (response.statusCode == 200) {
+        message = response.data["data"]["translations"][0]["translatedText"];
+      }
+    } on DioError catch (e) {
+      final errorMessage = DioExceptions.fromDioError(e).toString();
+
+      throw errorMessage;
+    }
+
+    return message;
   }
 }
