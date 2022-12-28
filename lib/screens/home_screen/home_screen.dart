@@ -1,7 +1,8 @@
-import 'package:bakurdi/models/chat.dart';
+import 'package:bakurdi/controllers/chat_controller.dart';
 import 'package:bakurdi/widgets/UI/bottom_chat.dart';
 import 'package:bakurdi/widgets/UI/message.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -12,21 +13,29 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('bakurdi x ChatpGPT'),
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              itemCount: chats.length,
-              itemBuilder: (context, index) {
-                return Message(
-                  message: chats[index].message ?? "No message",
-                  isOwner: chats[index].isOwner,
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: Column(
+          children: [
+            Expanded(
+              child:
+                  Consumer<ChatController>(builder: (context, controller, _) {
+                return ListView.builder(
+                  itemCount: controller.chats.length,
+                  itemBuilder: (context, index) {
+                    return Message(
+                      message: controller.chats[index].message ?? "No message",
+                      isOwner: controller.chats[index].isOwner,
+                    );
+                  },
                 );
-              },
+              }),
             ),
-          ),
-          const BottomChat(),
-        ],
+            const BottomChat(),
+          ],
+        ),
       ),
     );
   }

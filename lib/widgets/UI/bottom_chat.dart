@@ -1,4 +1,7 @@
+import 'package:bakurdi/controllers/chat_controller.dart';
+import 'package:bakurdi/models/chat.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class BottomChat extends StatefulWidget {
   const BottomChat({super.key});
@@ -8,11 +11,11 @@ class BottomChat extends StatefulWidget {
 }
 
 class _BottomChatState extends State<BottomChat> {
-  TextEditingController controller = TextEditingController();
+  TextEditingController chatController = TextEditingController();
   @override
   void dispose() {
     super.dispose();
-    controller.dispose();
+    chatController.dispose();
   }
 
   @override
@@ -30,18 +33,36 @@ class _BottomChatState extends State<BottomChat> {
               ),
               Expanded(
                 flex: 4,
-                child: TextField(
-                  controller: controller,
-                  decoration: const InputDecoration(
-                    hintText: 'Type a message',
-                    border: InputBorder.none,
-                  ),
-                ),
+                child:
+                    Consumer<ChatController>(builder: (context, controller, _) {
+                  return TextField(
+                    controller: chatController,
+                    onSubmitted: (val) {
+                      controller.addChat(
+                        Chat(message: chatController.text),
+                      );
+                      chatController.clear();
+                      FocusScope.of(context).unfocus();
+                    },
+                    decoration: const InputDecoration(
+                      hintText: 'Type a message',
+                      border: InputBorder.none,
+                    ),
+                  );
+                }),
               ),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.send),
-              ),
+              Consumer<ChatController>(builder: (context, controller, _) {
+                return IconButton(
+                  onPressed: () {
+                    controller.addChat(
+                      Chat(message: chatController.text),
+                    );
+                    chatController.clear();
+                    FocusScope.of(context).unfocus();
+                  },
+                  icon: const Icon(Icons.send),
+                );
+              }),
             ],
           ),
         ),
