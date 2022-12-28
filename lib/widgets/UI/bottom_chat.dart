@@ -1,9 +1,7 @@
 import 'package:bakurdi/controllers/chat_controller.dart';
-import 'package:bakurdi/helpers/helper_functions.dart';
 import 'package:bakurdi/models/chat.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:speech_to_text/speech_to_text.dart';
 
 class BottomChat extends StatefulWidget {
   const BottomChat({super.key});
@@ -14,10 +12,6 @@ class BottomChat extends StatefulWidget {
 
 class _BottomChatState extends State<BottomChat> {
   TextEditingController chatController = TextEditingController();
-
-  SpeechToText speech = SpeechToText();
-  bool isListening = false;
-  double confidence = 1.0;
 
   @override
   void dispose() {
@@ -34,25 +28,6 @@ class _BottomChatState extends State<BottomChat> {
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Row(
             children: [
-              IconButton(
-                onPressed: () async {
-                  setState(() {
-                    isListening = !isListening;
-                  });
-                  if (isListening) {
-                    await startListening(speech);
-                    speech.listen(
-                      onResult: (res) {
-                        chatController.text = res.recognizedWords;
-                      },
-                    );
-                  } else {
-                    await stopListening(speech);
-                  }
-                },
-                icon: Icon(Icons.mic,
-                    color: isListening ? Colors.blue : Colors.grey),
-              ),
               Expanded(
                 flex: 4,
                 child:
