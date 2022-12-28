@@ -11,21 +11,24 @@ class Message extends StatelessWidget {
       mainAxisAlignment:
           isOwner ? MainAxisAlignment.end : MainAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
+        Container(
+          constraints: const BoxConstraints(minWidth: 100, maxWidth: 200),
+          child: Padding(
             padding: const EdgeInsets.all(8.0),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(30),
-              color: isOwner ? Colors.blue : Colors.grey,
-            ),
-            child: Padding(
+            child: Container(
               padding: const EdgeInsets.all(8.0),
-              child: Text(
-                message,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+                color: isOwner ? Colors.blue : Colors.grey,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  message,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),

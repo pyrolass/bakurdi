@@ -60,17 +60,14 @@ class _BottomChatState extends State<BottomChat> {
                   return TextField(
                     controller: chatController,
                     onSubmitted: (val) async {
-                      await stopListening(speech);
-                      setState(() {
-                        isListening = false;
-                      });
-
                       if (chatController.text.isNotEmpty) {
                         controller.addChat(Chat(
                           message: chatController.text,
+                          isOwner: true,
                         ));
-                        chatController.clear();
+                        controller.sendMessage(chatController.text);
                       }
+                      chatController.clear();
                     },
                     decoration: const InputDecoration(
                       hintText: 'Type a message',
@@ -82,17 +79,15 @@ class _BottomChatState extends State<BottomChat> {
               Consumer<ChatController>(builder: (context, controller, _) {
                 return IconButton(
                   onPressed: () async {
-                    await stopListening(speech);
-                    setState(() {
-                      isListening = false;
-                    });
-
                     if (chatController.text.isNotEmpty) {
                       controller.addChat(Chat(
                         message: chatController.text,
+                        isOwner: true,
                       ));
-                      chatController.clear();
+                      controller.sendMessage(chatController.text);
                     }
+                    FocusScope.of(context).unfocus();
+                    chatController.clear();
                   },
                   icon: const Icon(Icons.send),
                 );
