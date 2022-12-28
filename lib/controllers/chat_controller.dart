@@ -10,8 +10,14 @@ class ChatController with ChangeNotifier {
   final DioClient _dioClient = DioClient();
 
   List<Chat> _chats = [];
-
   List<Chat> get chats => _chats;
+
+  bool _loading = false;
+  bool get loading => _loading;
+
+  void setIsLoading(bool value) {
+    _loading = value;
+  }
 
   void addChat(Chat chat) {
     _chats.add(chat);
@@ -19,6 +25,8 @@ class ChatController with ChangeNotifier {
   }
 
   Future<List<Chat>> sendMessage(String message) async {
+    print("object");
+    setIsLoading(true);
     try {
       var response = await _dioClient.post(
         "https://api.openai.com/v1/engines/text-davinci-003/completions",
@@ -45,12 +53,14 @@ class ChatController with ChangeNotifier {
           ),
         );
       }
-      notifyListeners();
-      return _chats;
     } on DioError catch (e) {
+      setIsLoading(true);
       final errorMessage = DioExceptions.fromDioError(e).toString();
 
       throw errorMessage;
     }
+    setIsLoading(true);
+    notifyListeners();
+    return _chats;
   }
 }
