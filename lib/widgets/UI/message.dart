@@ -12,7 +12,7 @@ class Message extends StatelessWidget {
           isOwner ? MainAxisAlignment.end : MainAxisAlignment.start,
       children: [
         Container(
-          constraints: const BoxConstraints(minWidth: 100, maxWidth: 200),
+          constraints: const BoxConstraints(maxWidth: 200),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Container(
@@ -23,11 +23,15 @@ class Message extends StatelessWidget {
               ),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  message,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
+                child: Directionality(
+                  textDirection:
+                      isOwner ? TextDirection.ltr : TextDirection.rtl,
+                  child: Text(
+                    message.trim(),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
