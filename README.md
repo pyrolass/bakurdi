@@ -1,6 +1,6 @@
 # bakurdi
 
-This project uses chatGPT
+This project uses Open AI chat api
 
 Before you use the app add your own google and open AI api keys
 
