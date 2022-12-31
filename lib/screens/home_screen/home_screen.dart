@@ -11,7 +11,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('bakurdi x ChatpGPT'),
+        title: const Text('bakurdi'),
       ),
       body: GestureDetector(
         onTap: () {
